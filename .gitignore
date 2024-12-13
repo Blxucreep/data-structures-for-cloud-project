@@ -1,0 +1,6 @@
+# ignore data directory
+epic games store/
+
+# ignore denormalization files
+user_oriented.json
+analyst_oriented.json

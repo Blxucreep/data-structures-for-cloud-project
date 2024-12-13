@@ -1,0 +1,189 @@
+{
+    "query_1": {
+        "collection": "games_user_view",
+        "function": "aggregate",
+        "pipeline": [
+            {
+                "$match": { "game_slug": "celeste" }
+            },
+            {
+                "$unwind": { "path": "$critics", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$project": {
+                    "name": 1,
+                    "reviews.author": "$critics.author",
+                    "reviews.rating": "$critics.rating",
+                    "reviews.comment": "$critics.comment",
+                    "reviews.date": "$critics.date"
+                }
+            }
+        ]
+    },    
+    "query_2": {
+        "collection": "games_user_view",
+        "function": "aggregate",
+        "pipeline": [
+            {
+                "$match": { "game_slug": "celeste" }
+            },
+            {
+                "$unwind": { "path": "$necessary_hardware", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$project": {
+                    "name": 1,
+                    "necessaryHardware.operating_system": "$necessary_hardware.operacional_system",
+                    "necessaryHardware.processor": "$necessary_hardware.processor",
+                    "necessaryHardware.memory": "$necessary_hardware.memory",
+                    "necessaryHardware.graphics": "$necessary_hardware.graphics",
+                    "necessaryHardware.graphics_memory": "$necessary_hardware.graphics_memory"
+                }
+            }
+        ]
+    },    
+    "query_3": {
+        "collection": "games_user_view",
+        "function": "aggregate",
+        "pipeline": [
+            {
+                "$match": { "game_slug": "rainbow-six-siege" }
+            },
+            {
+                "$unwind": { "path": "$social_networks", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$project": {
+                    "name": 1,
+                    "socialNetworks.url": "$social_networks.url",
+                    "socialNetworks.description": "$social_networks.description"
+                }
+            }
+        ]
+    },    
+    "query_4": {
+        "collection": "games_user_view",
+        "function": "aggregate",
+        "pipeline": [
+            {
+                "$match": { "game_slug": "shadow-complex" }
+            },
+            {
+                "$unwind": { "path": "$twitter_summary.recent_tweets", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$project": {
+                    "name": 1,
+                    "twitterAccounts.username": "$twitter_summary.username",
+                    "tweets.text": "$twitter_summary.recent_tweets.text",
+                    "tweets.quantity_likes": "$twitter_summary.recent_tweets.quantity_likes",
+                    "tweets.timestamp": "$twitter_summary.recent_tweets.timestamp"
+                }
+            }
+        ]
+    },
+    "query_5": {
+        "collection": "games_analyst_view",
+        "function": "aggregate",
+        "pipeline": [
+            {
+                "$lookup": {
+                    "from": "open_critic",
+                    "localField": "id",
+                    "foreignField": "game_id",
+                    "as": "reviews"
+                }
+            },
+            {
+                "$unwind": "$reviews"
+            },
+            {
+                "$addFields": {
+                    "month": { "$substr": ["$reviews.date", 5, 2] }
+                }
+            },
+            {
+                "$group": {
+                    "_id": { "name": "$name", "month": "$month" },
+                    "avgRating": { "$avg": "$reviews.rating" },
+                    "reviewCount": { "$sum": 1 }
+                }
+            },
+            {
+                "$project": {
+                    "name": "$_id.name",
+                    "month": "$_id.month",
+                    "avgRating": 1,
+                    "reviewCount": 1
+                }
+            }
+        ]        
+    },    
+    "query_6": {
+        "collection": "games_analyst_view",
+        "function": "aggregate",
+        "pipeline": [
+            {
+                "$unwind": { "path": "$twitter_accounts", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$unwind": { "path": "$twitter_accounts.recent_tweets", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$group": {
+                    "_id": "$name",
+                    "tweetCount": { "$sum": 1 }
+                }
+            },
+            {
+                "$sort": { "tweetCount": -1 }
+            }
+        ]
+    },    
+    "query_7": {
+        "collection": "games_analyst_view",
+        "function": "aggregate",
+        "pipeline": [
+            {
+                "$unwind": { "path": "$critics", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$group": {
+                    "_id": "$publisher",
+                    "avgRating": { "$avg": "$critics.rating" },
+                    "reviewCount": { "$sum": 1 }
+                }
+            },
+            {
+                "$match": { "reviewCount": { "$gte": 10 } }
+            },
+            {
+                "$sort": { "avgRating": -1 }
+            },
+            {
+                "$limit": 5
+            }
+        ]
+    },    
+    "query_8": {
+        "collection": "games_analyst_view",
+        "function": "aggregate",
+        "pipeline": [
+            {
+                "$unwind": { "path": "$genres", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$unwind": { "path": "$twitter_accounts.recent_tweets", "preserveNullAndEmptyArrays": true }
+            },
+            {
+                "$group": {
+                    "_id": "$genres",
+                    "totalTweetCount": { "$sum": 1 }
+                }
+            },
+            {
+                "$sort": { "totalTweetCount": -1 }
+            }
+        ]
+    }    
+}
