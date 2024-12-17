@@ -19,7 +19,7 @@
                 }
             }
         ]
-    },    
+    },
     "query_2": {
         "collection": "games_user_view",
         "function": "aggregate",
@@ -41,7 +41,7 @@
                 }
             }
         ]
-    },    
+    },
     "query_3": {
         "collection": "games_user_view",
         "function": "aggregate",
@@ -83,7 +83,7 @@
         ]
     },
     "query_5": {
-        "collection": "games_analyst_view",
+        "collection": "games_user_view",
         "function": "aggregate",
         "pipeline": [
             {
@@ -117,10 +117,10 @@
                     "reviewCount": 1
                 }
             }
-        ]        
-    },    
+        ]
+    },
     "query_6": {
-        "collection": "games_analyst_view",
+        "collection": "games_user_view",
         "function": "aggregate",
         "pipeline": [
             {
@@ -141,7 +141,7 @@
         ]
     },    
     "query_7": {
-        "collection": "games_analyst_view",
+        "collection": "games_user_view",
         "function": "aggregate",
         "pipeline": [
             {
@@ -166,7 +166,7 @@
         ]
     },    
     "query_8": {
-        "collection": "games_analyst_view",
+        "collection": "games_user_view",
         "function": "aggregate",
         "pipeline": [
             {
